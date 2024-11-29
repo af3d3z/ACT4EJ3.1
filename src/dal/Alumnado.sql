@@ -1,5 +1,5 @@
 create table Alumnado (
-	id INT,
+	id INT PRIMARY KEY,
 	Nombre VARCHAR(50),
 	Apellidos VARCHAR(50),
 	FechaNacimiento DATE

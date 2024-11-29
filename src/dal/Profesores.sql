@@ -1,5 +1,5 @@
 create table Profesores (
-	id INT,
+	id INT Primary key,
 	Nombre VARCHAR(50),
 	Apellidos VARCHAR(50),
 	FechaNacimiento DATE,

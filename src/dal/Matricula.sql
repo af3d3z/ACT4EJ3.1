@@ -1,9 +1,11 @@
 create table Matricula (
-	id INT,
+	id INT PRIMARY KEY,
 	idProfesorado INT,
 	idAlumnado INT,
 	Asignatura VARCHAR(50),
-	Curso INT
+	Curso INT,
+	FOREIGN KEY (idProfesorado) REFERENCES Profesores(id),
+	FOREIGN KEY (idAlumnado) REFERENCES Alumnado(id)
 );
 insert into Matricula (id, idProfesorado, idAlumnado, Asignatura, Curso) values (1, 137, 25, 'Marketing', 3);
 insert into Matricula (id, idProfesorado, idAlumnado, Asignatura, Curso) values (2, 187, 138, 'Human Resources', 11);
