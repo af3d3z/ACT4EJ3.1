@@ -1,7 +1,3 @@
-DROP TABLE IF EXISTS Alumnado
-create table Alumnado ( id INT PRIMARY KEY, Nombre VARCHAR(50), Apellidos VARCHAR(50), FechaNacimiento DATE) 
-
-
 insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (1, 'Johnathon', 'Jex', '2002-01-14') 
 insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (2, 'Dion', 'Babst', '2007-06-16') 
 insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (3, 'Eran', 'Gimbrett', '2012-01-03') 
@@ -202,3 +198,5 @@ insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (197, 'Rubi
 insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (198, 'Dixie', 'Fasset', '2018-09-20') 
 insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (199, 'Umberto', 'Casey', '2024-06-11') 
 insert into Alumnado (id, Nombre, Apellidos, FechaNacimiento) values (200, 'Glynda', 'Goodyear', '2003-12-23') 
+
+
