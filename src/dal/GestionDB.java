@@ -84,8 +84,8 @@ public class GestionDB {
 			conn = this.connect();
 			Statement statement = conn.createStatement();
 			
-			statement.executeUpdate("DROP TABLE IF EXISTS Profesorado");
-			statement.executeUpdate("CREATE TABLE Profesorado (id INT AUTO_INCREMENT PRIMARY KEY, Nombre VARCHAR(50), Apellidos VARCHAR(50), FechaNacimiento DATE, Antiguedad INT)");
+			statement.executeUpdate("DROP TABLE IF EXISTS Profesores");
+			statement.executeUpdate("CREATE TABLE Profesores (id INT AUTO_INCREMENT PRIMARY KEY, Nombre VARCHAR(50), Apellidos VARCHAR(50), FechaNacimiento DATE, Antiguedad INT)");
 
 			try (BufferedReader br = new BufferedReader(new FileReader("src/dal/Profesores.sql"))) {
                 String line;
@@ -131,15 +131,15 @@ public class GestionDB {
 			Statement statement = conn.createStatement();
 			
 			ResultSet infoTablaAlumnado = statement.executeQuery(""
-					+ "SELECT EXISTS (\n"
-					+ "    SELECT \n"
-					+ "        TABLE_NAME\n"
-					+ "    FROM \n"
-					+ "    information_schema.TABLES \n"
+					+ "SELECT EXISTS ("
+					+ "    SELECT "
+					+ "        TABLE_NAME"
+					+ "    FROM "
+					+ "    information_schema.TABLES "
 					+ "    WHERE \n"
-					+ "    TABLE_SCHEMA LIKE 'ad2425_afernandez' AND \n"
-					+ "        TABLE_TYPE LIKE 'BASE TABLE' AND\n"
-					+ "        TABLE_NAME = 'Alumnado'\n"
+					+ "    TABLE_SCHEMA LIKE 'ad2425_afernandez' AND "
+					+ "        TABLE_TYPE LIKE 'BASE TABLE' AND"
+					+ "        TABLE_NAME = 'Alumnado'"
 					+ "    )");
 			
 			if (infoTablaAlumnado.next()) {
@@ -147,15 +147,15 @@ public class GestionDB {
 			}
 			
 			ResultSet infoTablaProfesorado = statement.executeQuery(""
-					+ "SELECT EXISTS (\n"
-					+ "    SELECT \n"
-					+ "        TABLE_NAME\n"
-					+ "    FROM \n"
-					+ "    information_schema.TABLES \n"
-					+ "    WHERE \n"
-					+ "    TABLE_SCHEMA LIKE 'ad2425_afernandez' AND \n"
-					+ "        TABLE_TYPE LIKE 'BASE TABLE' AND\n"
-					+ "        TABLE_NAME = 'Profesores'\n"
+					+ "SELECT EXISTS ("
+					+ "    SELECT "
+					+ "        TABLE_NAME"
+					+ "    FROM "
+					+ "    information_schema.TABLES "
+					+ "    WHERE "
+					+ "    TABLE_SCHEMA LIKE 'ad2425_afernandez' AND "
+					+ "        TABLE_TYPE LIKE 'BASE TABLE' AND"
+					+ "        TABLE_NAME = 'Profesores'"
 					+ "    )");
 			
 			if(infoTablaProfesorado.next()) {
@@ -226,7 +226,7 @@ public class GestionDB {
     	ArrayList<Profesor> listado = new ArrayList<Profesor>();
     	try {
     		conn = this.connect();
-    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Profesorado");
+    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Profesores");
     		ResultSet res = statement.executeQuery();
     		
     		while(res.next()) {
@@ -243,7 +243,7 @@ public class GestionDB {
     	ArrayList<Matricula> matriculas = new ArrayList<Matricula>();
     	try {
     		conn = this.connect();
-    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Matriculas");
+    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Matricula");
     		ResultSet res = statement.executeQuery();
     		while(res.next()) {
     			matriculas.add(new Matricula(res.getInt("id"), res.getInt("idProfesorado"), res.getInt("idAlumnado"), res.getString("Asignatura"), res.getInt("Curso")));
@@ -253,6 +253,17 @@ public class GestionDB {
     	}
     	
     	return matriculas;
+    }
+    
+    public void borrarTablaMatriculas() {
+    	Connection conn = null;
+    	try {
+    		conn = this.connect();
+    		Statement statement = conn.createStatement();
+    		statement.executeUpdate("DROP TABLE IF EXISTS Matricula");
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
     }
 
 }

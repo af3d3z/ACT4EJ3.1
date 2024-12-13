@@ -14,6 +14,8 @@ public class Main {
 		System.out.println("1. Profesorado.");
 		System.out.println("2. Alumnado.");
 		System.out.println("3. Matriculas.");
+		System.out.println("4. Crear tablas");
+		System.out.println("5. Borrar tablas.");
 		System.out.println("0. Salir.");
 	}
 	
@@ -80,10 +82,11 @@ public class Main {
 					}
 				} 
 				case 3 -> {
+					// OPCIONES MATRICULAS
 					int opcionMenu = menuOperaciones(sc, "Matricula");
 					switch(opcionMenu) {
 						case 1 -> {
-							int affectedRows = db.crearTablaAlumnos();
+							int affectedRows = db.crearTablaMatricula();
 							if (affectedRows == -1) {
 								System.out.println("Se deben de crear previamente las tablas Profesores y Alumnado.");
 							}else {
@@ -101,6 +104,17 @@ public class Main {
 								System.out.println("--------------------------");
 							}
 						}
+					}
+				}
+				case 4 -> {
+					db.borrarTablaMatriculas();
+					int affectedRowsAlumnos = db.crearTablaAlumnos();
+					int affectedRowsProfesores = db.crearTablaProfesores();
+					
+					if (affectedRowsAlumnos > 0 && affectedRowsProfesores > 0 && (db.crearTablaMatricula())> 0) {
+						System.out.println("Se han creado correctamente todas las tablas.");
+					}else {
+						System.out.println("No se han podido crear correctamente todas las tablas.");
 					}
 				}
 			}
