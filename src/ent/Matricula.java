@@ -49,6 +49,20 @@ public class Matricula {
 	public Matricula() {}
 	
 	/***
+	 * Constructor sin ID para los inserts
+	 * @param idProfesor
+	 * @param idAlumno
+	 * @param asignatura
+	 * @param curso
+	 */
+	public Matricula(int idProfesor, int idAlumno, String asignatura, int curso) {
+		this.idProfesor = idProfesor;
+		this.idAlumno = idAlumno;
+		this.asignatura = asignatura;
+		this.curso = curso;
+	}
+	
+	/***
 	 * Constructor con todos los parámetros
 	 * @param id
 	 * @param idProfesor
@@ -63,4 +77,5 @@ public class Matricula {
 		this.asignatura = asignatura;
 		this.curso = curso;
 	}
+	
 }

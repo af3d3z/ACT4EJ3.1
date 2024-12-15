@@ -17,7 +17,7 @@ import ent.Matricula;
 import ent.Profesor;
 
 public class GestionDB {
-	public Connection connect() {
+	public static Connection connect() {
 		Connection conn = null;
 		String connURL = "jdbc:mysql://dns11036.phdns11.es:3306/ad2425_afernandez";
 		try {
@@ -81,7 +81,7 @@ public class GestionDB {
 		Connection conn = null;
 		
 		try {
-			conn = this.connect();
+			conn = GestionDB.connect();
 			Statement statement = conn.createStatement();
 			
 			statement.executeUpdate("DROP TABLE IF EXISTS Profesores");
@@ -164,8 +164,8 @@ public class GestionDB {
 			
 			
 			if(existeAlumnado && existeProfesorado) {
-				statement.executeUpdate("DROP TABLE IF EXISTS Matricula");
-				statement.executeUpdate("create table Matricula ( id INT PRIMARY KEY, idProfesorado INT, idAlumnado INT, Asignatura VARCHAR(50), Curso INT, FOREIGN KEY (idProfesorado) REFERENCES Profesores(id), FOREIGN KEY (idAlumnado) REFERENCES Alumnado(id))\n");
+				statement.executeUpdate("DROP TABLE IF EXISTS Matriculas");
+				statement.executeUpdate("create table Matriculas ( id INT PRIMARY KEY AUTO_INCREMENT, idProfesorado INT, idAlumnado INT, Asignatura VARCHAR(50), Curso INT, FOREIGN KEY (idProfesorado) REFERENCES Profesores(id), FOREIGN KEY (idAlumnado) REFERENCES Alumnado(id))\n");
 
 				try (BufferedReader br = new BufferedReader(new FileReader("src/dal/Matricula.sql"))) {
 	                String line;
@@ -208,7 +208,7 @@ public class GestionDB {
     	Connection conn = null;
     	ArrayList<Alumno> listado = new ArrayList<Alumno>();
     	try {
-    		conn = this.connect();
+    		conn = GestionDB.connect();
     		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Alumnado");
     		ResultSet res = statement.executeQuery();
     		
@@ -225,7 +225,7 @@ public class GestionDB {
     	Connection conn = null;
     	ArrayList<Profesor> listado = new ArrayList<Profesor>();
     	try {
-    		conn = this.connect();
+    		conn = GestionDB.connect();
     		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Profesores");
     		ResultSet res = statement.executeQuery();
     		
@@ -238,31 +238,36 @@ public class GestionDB {
     	return listado;
     }
 
-    public ArrayList<Matricula> listadoMatriculas() {
-    	Connection conn = null;
-    	ArrayList<Matricula> matriculas = new ArrayList<Matricula>();
-    	try {
-    		conn = this.connect();
-    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Matricula");
-    		ResultSet res = statement.executeQuery();
-    		while(res.next()) {
-    			matriculas.add(new Matricula(res.getInt("id"), res.getInt("idProfesorado"), res.getInt("idAlumnado"), res.getString("Asignatura"), res.getInt("Curso")));
-    		}
-    	}catch(Exception e) {
-    		e.printStackTrace();
-    	}
-    	
-    	return matriculas;
-    }
-    
     public void borrarTablaMatriculas() {
     	Connection conn = null;
     	try {
-    		conn = this.connect();
+    		conn = GestionDB.connect();
     		Statement statement = conn.createStatement();
-    		statement.executeUpdate("DROP TABLE IF EXISTS Matricula");
+    		statement.executeUpdate("DROP TABLE IF EXISTS Matriculas");
     	}catch(Exception e) {
-    		e.printStackTrace();
+    		System.err.println("No se ha podido borrar la tabla Matriculas. ");
+    	}
+    }
+    
+    public void borrarTablaProfesores() {
+    	Connection conn = null;
+    	try {
+    		conn = GestionDB.connect();
+    		Statement statement = conn.createStatement();
+    		statement.executeUpdate("DROP TABLE IF EXISTS Profesores");
+    	}catch(Exception e) {
+    		System.err.println("No se ha podido borrar la tabla Profesores.");
+    	}
+    }
+    
+    public void borrarTablaAlumnos() {
+    	Connection conn = null;
+    	try {
+    		conn = GestionDB.connect();
+    		Statement statement = conn.createStatement();
+    		statement.executeUpdate("DROP TABLE IF EXISTS Alumnado");
+    	}catch(Exception e) {
+    		System.err.println("No se ha podido borrar la tabla Alumnado.");
     	}
     }
 
