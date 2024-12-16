@@ -80,6 +80,7 @@ public class Main {
 					}
 				}
 				case 2 -> {
+					// OPCIONES ALUMNADO
 					int opcionMenu = menuOperaciones(sc, "Alumnado");
 					switch(opcionMenu) {
 						case 1 -> {
@@ -129,13 +130,15 @@ public class Main {
 								System.out.println("Introduzca el id de la matrícula a mostrar:");
 								int id = sc.nextInt();
 								sc.nextLine();
-								Matricula matricula = GestionMatriculas.verMatricula(id);
+								Matricula matricula = GestionMatriculas.conseguirMatricula(id);
 								if (matricula != null) {
 									System.out.println("ID: " + matricula.getId());
 									System.out.println("Id Profesor: " + matricula.getIdProfesor());
 									System.out.println("Id Alumno: " + matricula.getIdAlumno());
 									System.out.println("Asignatura: " + matricula.getAsignatura());
 									System.out.println("Curso: " + matricula.getCurso());
+								}else {
+									System.out.println("No se ha encontrado la matrícula.");
 								}
 							}catch(IllegalArgumentException e) {
 								System.err.println("Id no válido. Intentalo otra vez.");
@@ -172,6 +175,7 @@ public class Main {
 								System.err.println("Ha introducido un campo de forma incorrecta, inténtelo otra vez.");
 							}
 						}
+						// modifica una matrícula
 						case 5 -> {
 							try {
 								int id;
@@ -209,6 +213,27 @@ public class Main {
 								System.err.println("Ha introducido un campo de forma incorrecta, inténtelo otra vez.");
 							} 
 							
+						}
+						// borrar una matrícula
+						case 6 -> {
+							try {
+								int id;
+								boolean borrado = false;
+								String confirmacion = "";
+								System.out.println("Introduce el id de la matrícula a borrar: ");
+								id = sc.nextInt();
+								sc.nextLine();
+								System.out.println("¿Seguro que quieres borrar la matrícula con id " + id + "?");
+								confirmacion = sc.nextLine();
+								if(confirmacion.toLowerCase().charAt(0) == 's') {
+									borrado = GestionMatriculas.borrarMatricula(id);
+									if (borrado) {
+										System.out.println("Se ha borrado correctamente");
+									}
+								}
+							}catch(InputMismatchException e) {
+								
+							}
 						}
 					}
 				}

@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import ent.Matricula;
 
 public class GestionMatriculas {
+	/***
+	 * Inserta una matricula en la base de datos
+	 * @param matricula
+	 * @return booleano que indica si se ha insertado o no
+	 */
 	public static boolean insertar(Matricula matricula) {
 		boolean insertado = false;
 		Connection conn = GestionDB.connect();
@@ -24,7 +29,7 @@ public class GestionMatriculas {
 				insertado = true;
 			}
 		} catch (SQLException e) {
-			System.err.println("No se ha podido insertar el usuario proporcionado, comprueba que se ha creado la tabla y que los campos introducidos son correctos.");
+			System.err.println("No se ha podido insertar la matrícula, comprueba que se ha creado la tabla y que los campos introducidos son correctos.");
 		}
 		
 		return insertado;
@@ -35,7 +40,7 @@ public class GestionMatriculas {
 	 * @param id
 	 * @return
 	 */
-	public static Matricula verMatricula(int id) {
+	public static Matricula conseguirMatricula(int id) {
 		Connection conn = GestionDB.connect();
 		Matricula matricula = null;
 		try {
@@ -162,14 +167,17 @@ public class GestionMatriculas {
      * @return
      */
     public static boolean borrarMatricula(int id) {
+    	int filasAfectadas = 0;
     	boolean borrado = false;
-    	Connection conn = null;
-    	
-    	conn = GestionDB.connect();
+    	Connection conn = GestionDB.connect();
     	
     	try {
 			Statement statement = conn.createStatement();
-			borrado = statement.execute(String.format("DELETE FROM Matriculas WHERE id = %d", id));
+			filasAfectadas = statement.executeUpdate(String.format("DELETE FROM Matriculas WHERE id = %d", id));
+			
+			if (filasAfectadas > 0) {
+				borrado = true;
+			}
 		} catch (SQLException e) {
 			System.err.println("No se ha podido borrar la matrícula con id: " + id + ". Comprueba que existe tanto la matrícula con ese id como la tabla Matriculas.");
 		}
