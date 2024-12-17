@@ -133,7 +133,7 @@ public class GestionMatriculas {
     	
     	try {
 			Statement statement = conn.createStatement();
-			actualizado = statement.execute(String.format("UPDATE Matriculas SET Asignatura = %s WHERE id = %d", asignatura, id));
+			actualizado = statement.execute(String.format("UPDATE Matriculas SET Asignatura = '%s' WHERE id = %d", asignatura, id));
 		} catch (SQLException e) {
 			System.err.println("No se ha podido actualizar el nombre de la asignatura en la matrícula con id: " + id + ". Comprueba que tanto el id de alummno como el nombre de la asignatura sean válidos y que la tabla exista.");
 		}

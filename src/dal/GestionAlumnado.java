@@ -1,11 +1,11 @@
 package dal;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import ent.Alumno;
@@ -19,8 +19,9 @@ public class GestionAlumnado {
 	public static boolean insertar(Alumno alumno) {
 		boolean insertado = false;
 		Connection conn = GestionDB.connect();
-		String sql = String.format("INSERT INTO Alumnado (Nombre, Apellidos, FechaNacimiento) VALUES (%s, %s, %s)", 
-				alumno.getNombre(), alumno.getApellidos(), alumno.getFechaNacimiento());
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		String sql = String.format("INSERT INTO Alumnado (Nombre, Apellidos, FechaNacimiento) VALUES ('%s', '%s', '%s')", 
+				alumno.getNombre(), alumno.getApellidos(), formatter.format(alumno.getFechaNacimiento()));
 		
 		try {
 			Statement statement = conn.createStatement();
@@ -29,6 +30,7 @@ public class GestionAlumnado {
 				insertado = true;
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.err.println("No se ha podido insertar el alumno, comprueba que se ha creado la tabla y que los campos introducidos son correctos.");
 		}
 		return insertado;
@@ -87,8 +89,9 @@ public class GestionAlumnado {
 		
 		try {
 			Statement statement = conn.createStatement();
-			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET Nombre = %s WHERE id = %d", nombre, id)) > 0 ? true: false;
+			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET Nombre = '%s' WHERE id = %d", nombre, id)) > 0 ? true: false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.err.println("No se ha podido actualizar el nombre del alumno, comprueba que existan el alumno y la tabla Alumnado.");
 		}
 		return actualizado;
@@ -105,7 +108,7 @@ public class GestionAlumnado {
 		
 		try {
 			Statement statement = conn.createStatement();
-			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET Apellidos = %s WHERE id = %d", apellidos, id)) > 0 ? true: false;
+			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET Apellidos = '%s' WHERE id = %d", apellidos, id)) > 0 ? true: false;
 		} catch (SQLException e) {
 			System.err.println("No se ha podido actualizar los apellidos del alumno, comprueba que existan el alumno y la tabla Alumnado.");
 		}
@@ -115,17 +118,18 @@ public class GestionAlumnado {
 	/***
 	 * Modifica la fecha de nacimiento de un alumno
 	 * @param id
-	 * @param fechaNacimiento
+	 * @param fecha
 	 * @return true si se ha podido modificar satisfactoriamente
 	 */
-	public static boolean modificarFechaNacimiento(int id, Date fechaNacimiento) {
+	public static boolean modificarFechaNacimiento(int id, String fecha) {
 		boolean actualizado = false;
 		Connection conn = GestionDB.connect();
 		
 		try {
 			Statement statement = conn.createStatement();
-			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET FechaNacimiento = '%s' WHERE id = %d", fechaNacimiento.toString(), id)) > 0 ? true: false;
+			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET FechaNacimiento = '%s' WHERE id = %d", fecha, id)) > 0 ? true: false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.err.println("No se ha podido actualizar los apellidos del alumno, comprueba que existan el alumno y la tabla Alumnado.");
 		}
 		return actualizado;

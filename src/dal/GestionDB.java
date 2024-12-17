@@ -6,17 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
-import ent.Alumno;
-import ent.Matricula;
-import ent.Profesor;
 
 public class GestionDB {
+	/***
+	 * Devuelve una conexión a la base de datos
+	 * @return
+	 */
 	public static Connection connect() {
 		Connection conn = null;
 		String connURL = "jdbc:mysql://dns11036.phdns11.es:3306/ad2425_afernandez";
@@ -32,12 +31,16 @@ public class GestionDB {
 		return conn;
 	}
 	
+	/***
+	 * Crea la tabla de alumnos en la bd
+	 * @return
+	 */
 	public int crearTablaAlumnos() {
 		int affectedRows = 0;
 		Connection conn = null;
 		
 		try {
-			conn = this.connect();
+			conn = GestionDB.connect();
 			Statement statement = conn.createStatement();
 			
 			statement.executeUpdate("DROP TABLE IF EXISTS Alumnado");
@@ -57,18 +60,18 @@ public class GestionDB {
 	            }
 	            
             } catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+            	System.err.println("No se encuentra el ficheriño.");
+            } catch (IOException e) {
+				System.err.println("Error de Entrada/Salida.");
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.err.println("Hubo un error con la base de datos, inténtelo más tarde." + e.getMessage());
 		}finally {
 	        if (conn != null) {
 	            try {
 	                conn.close();
 	            } catch (SQLException e) {
-	                System.err.println("Error closing connection: " + e.getMessage());
+	                System.err.println("Error cerrando la conexión: " + e.getMessage());
 	            }
 	        }
 	    }
@@ -76,6 +79,10 @@ public class GestionDB {
 		return affectedRows;
 	}
 	
+	/***
+	 * Crea la tabla profesores en la bd
+	 * @return
+	 */
 	public int crearTablaProfesores() {
 		int affectedRows = 0;
 		Connection conn = null;
@@ -101,12 +108,12 @@ public class GestionDB {
 	            }
 	            
             } catch (FileNotFoundException e) {
-				e.printStackTrace();
+				System.err.println("No se encuentra el ficheriño");
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.println("Error de Entrada/Salida");
 			}
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.err.println("Hubo un error con la base de datos, inténtelo más tarde. " + e.getMessage());
 		}finally {
 	        if (conn != null) {
 	            try {
@@ -120,6 +127,10 @@ public class GestionDB {
 		return affectedRows;
 	}
 
+	/***
+	 * Crea la tabla matrícula comprobando antes de que existen las otras dos
+	 * @return
+	 */
 	public int crearTablaMatricula() {
 		int affectedRows = 0;
 		Connection conn = null;
@@ -127,7 +138,7 @@ public class GestionDB {
 		boolean existeProfesorado = false;
 		
 		try {
-			conn = this.connect();
+			conn = GestionDB.connect();
 			Statement statement = conn.createStatement();
 			
 			ResultSet infoTablaAlumnado = statement.executeQuery(""
@@ -198,77 +209,53 @@ public class GestionDB {
 		return affectedRows;
 	}
 
-	
-    /***
-     * Lista los alumnos en la base de datos
-     * @param entidad
-     * @return
-     */
-    public ArrayList<Alumno> listadoAlumnos(){
-    	Connection conn = null;
-    	ArrayList<Alumno> listado = new ArrayList<Alumno>();
-    	try {
-    		conn = GestionDB.connect();
-    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Alumnado");
-    		ResultSet res = statement.executeQuery();
-    		
-    		while(res.next()) {
-    			listado.add(new Alumno(res.getInt("id"), res.getString("Nombre"), res.getString("Apellidos"), res.getDate("FechaNacimiento")));
-    		}
-    	}catch(Exception e) {
-    		e.printStackTrace();
-    	}
-    	return listado;
-    }
     
-    public ArrayList<Profesor> listadoProfesores(){
-    	Connection conn = null;
-    	ArrayList<Profesor> listado = new ArrayList<Profesor>();
-    	try {
-    		conn = GestionDB.connect();
-    		PreparedStatement statement = conn.prepareStatement("SELECT * FROM Profesores");
-    		ResultSet res = statement.executeQuery();
-    		
-    		while(res.next()) {
-    			listado.add(new Profesor(res.getInt("id"), res.getString("Nombre"), res.getString("Apellidos"), res.getDate("FechaNacimiento"), res.getInt("Antiguedad")));
-    		}
-    	}catch(Exception e) {
-    		e.printStackTrace();
-    	}
-    	return listado;
-    }
 
-    public void borrarTablaMatriculas() {
-    	Connection conn = null;
+	/***
+	 * Borra la tabla Matriculas de la bd
+	 */
+    public boolean borrarTablaMatriculas() {
+    	boolean borrada = false;
     	try {
-    		conn = GestionDB.connect();
+    		Connection conn = GestionDB.connect();
     		Statement statement = conn.createStatement();
-    		statement.executeUpdate("DROP TABLE IF EXISTS Matriculas");
+    		borrada = statement.executeUpdate("DROP TABLE IF EXISTS Matriculas") > 0 ? true : false;
     	}catch(Exception e) {
     		System.err.println("No se ha podido borrar la tabla Matriculas. ");
     	}
+    	return borrada;
     }
     
-    public void borrarTablaProfesores() {
-    	Connection conn = null;
+    /***
+     * Borra la tabla Profesores de la bd
+     */
+    public boolean borrarTablaProfesores() {
+    	boolean borrada = false;
     	try {
-    		conn = GestionDB.connect();
+    		Connection conn = GestionDB.connect();
     		Statement statement = conn.createStatement();
-    		statement.executeUpdate("DROP TABLE IF EXISTS Profesores");
+    		borrada = statement.executeUpdate("DROP TABLE IF EXISTS Profesores") > 0 ? true : false;
     	}catch(Exception e) {
     		System.err.println("No se ha podido borrar la tabla Profesores.");
     	}
+    	
+    	return borrada;
     }
     
-    public void borrarTablaAlumnos() {
-    	Connection conn = null;
+    /***
+     * Borra la tabla Alumnos de la bd
+     */
+    public boolean borrarTablaAlumnos() {
+    	boolean borrada = false;
     	try {
-    		conn = GestionDB.connect();
+    		Connection conn = GestionDB.connect();
     		Statement statement = conn.createStatement();
-    		statement.executeUpdate("DROP TABLE IF EXISTS Alumnado");
+    		borrada = statement.executeUpdate("DROP TABLE IF EXISTS Alumnado") > 0 ? true : false;
     	}catch(Exception e) {
     		System.err.println("No se ha podido borrar la tabla Alumnado.");
     	}
+    	
+    	return borrada;
     }
 
 }
