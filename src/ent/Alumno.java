@@ -1,6 +1,6 @@
 package ent;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Alumno {
 	private int id;
@@ -40,6 +40,18 @@ public class Alumno {
 	 * Constructor sin parámetros
 	 */
 	public Alumno() {}
+	
+	/***
+	 * Constructor con todos los parámetros menos el id para los inserts
+	 * @param nombre
+	 * @param apellidos
+	 * @param fechaNacimiento
+	 */
+	public Alumno(String nombre, String apellidos, Date fechaNacimiento) {
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.fechaNacimiento = fechaNacimiento;
+	}
 	
 	/***
 	 * Constructor con todos los parámetros

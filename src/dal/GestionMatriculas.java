@@ -166,7 +166,7 @@ public class GestionMatriculas {
      * @param id
      * @return
      */
-    public static boolean borrarMatricula(int id) {
+    public static boolean borrar(int id) {
     	int filasAfectadas = 0;
     	boolean borrado = false;
     	Connection conn = GestionDB.connect();

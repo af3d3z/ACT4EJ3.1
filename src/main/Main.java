@@ -1,10 +1,14 @@
 package main;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import dal.GestionAlumnado;
 import dal.GestionDB;
 import dal.GestionMatriculas;
 import ent.Alumno;
@@ -52,6 +56,19 @@ public class Main {
 		return opcion;
 	}
 	
+	static int menuModificarAlumno(Scanner sc) {
+		int opcion = 0;
+		do {
+			System.out.println("¿Qué quieres modificar?");
+			System.out.println("1. Nombre.");
+			System.out.println("2. Apellidos.");
+			System.out.println("3. Fecha de nacimiento.");
+			opcion = sc.nextInt();
+		}while(opcion <= 0 && opcion > 3);
+		
+		return opcion;
+	}
+	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		GestionDB db = new GestionDB();
@@ -60,11 +77,13 @@ public class Main {
 			menu();
 			opcion = sc.nextInt();
 			switch(opcion) {
+				// OPCIONES PROFESORADO
 				case 1 ->{
 					int opcionMenu = menuOperaciones(sc, "Profesorado");
 					switch(opcionMenu) {
 						case 1 -> {
 							int affectedRows = db.crearTablaProfesores();
+							System.out.println("Filas afectadas: " + affectedRows);
 						}
 						case 2 -> {
 							ArrayList<Profesor> profesores = db.listadoProfesores();
@@ -83,10 +102,12 @@ public class Main {
 					// OPCIONES ALUMNADO
 					int opcionMenu = menuOperaciones(sc, "Alumnado");
 					switch(opcionMenu) {
+						// crear tabla
 						case 1 -> {
 							int affectedRows = db.crearTablaAlumnos();
 							System.out.println("Filas afectadas: " + affectedRows);
 						}
+						// Listar registros
 						case 2 -> {
 							ArrayList<Alumno> alumnos = db.listadoAlumnos();
 							for(Alumno alum : alumnos) {
@@ -96,6 +117,81 @@ public class Main {
 								System.out.println("Fecha de nacimiento: " + alum.getFechaNacimiento());
 								System.out.println("--------------------------");
 							}
+						}
+						// Consultar uno en específico
+						case 3 -> {
+							try {
+								System.out.println("Introduce el id del alumno a mostrar: ");
+								int id = sc.nextInt();
+								sc.nextLine();
+								Alumno alumno = GestionAlumnado.conseguirAlumno(id);
+								if (alumno != null) {
+									System.out.println("ID: " + alumno.getId());
+									System.out.println("Nombre: " + alumno.getNombre());
+									System.out.println("Apellidos: " + alumno.getApellidos());
+									System.out.println("Fecha de nacimiento: " + alumno.getFechaNacimiento());
+								}else {
+									System.err.println("No se encuentra el alumno.");
+								}
+							}catch(IllegalArgumentException e) {
+								System.out.println("Id no válido. Inténtalo otra vez.");
+							}
+						}
+						// insertar un alumno
+						case 4 -> {
+							boolean insertado;
+							String nombre;
+							String apellidos;
+							String fechaNac;
+							try {
+								System.out.println("Introduzca el nombre: ");
+								nombre = sc.nextLine();
+								System.out.println("Introduzca los apellidos: ");
+								apellidos = sc.nextLine();
+								System.out.println("Introduce la fecha de nacimiento (dd-MM-yyyy): ");
+								fechaNac = sc.nextLine();
+								Date fecha = new SimpleDateFormat("dd-MM-yyyy").parse(fechaNac);
+								// insertamos el alumno
+								insertado = GestionAlumnado.insertar(new Alumno(nombre, apellidos, fecha));
+								if (insertado) {
+									System.out.println("Se ha añadido el nuevo alumno correctamente.");
+								}
+							}catch(IllegalArgumentException e) {
+								System.err.println("Ha introducido un campo de forma incorrecta, inténtelo otra vez.");
+							}catch(ParseException p) {
+								System.err.println("Formato de fecha incorrecto, inténtelo de nuevo.");
+							}
+						}
+						// modifica un alumno
+						case 5 -> {
+							try {
+								int id;
+								System.out.println("Introduce el id del alumno a modificar:");
+								id = sc.nextInt();
+								sc.nextLine();
+								if (id > 0) {
+									switch(menuModificarAlumno(sc)) {
+										case 1 -> {
+											System.out.println("Introduce el nombre del alumno:");
+											String nombre = sc.nextLine();
+											GestionAlumnado.modificarNombre(id, nombre);
+										}
+										case 2 -> {
+											System.out.println("Introduce los apellidos del alumno:");
+											String apellidos = sc.nextLine();
+											GestionAlumnado.modificarApellidos(id, apellidos);
+										}
+										case 3 -> {
+											System.out.println("Introduce la fecha de nacimiento:");
+											String fecha = sc.nextLine();
+											Date fechaNacimiento = new SimpleDateFormat("dd-MM-yyyy").parse(fecha);
+											GestionAlumnado.modificarFechaNacimiento(id, fecha);
+										}
+									}
+								}	
+							}catch(InputMismatchException e) {
+								System.err.println("Ha introducido un campo de forma incorrecta, inténtelo otra vez.");
+							} 
 						}
 					}
 				} 
@@ -226,7 +322,7 @@ public class Main {
 								System.out.println("¿Seguro que quieres borrar la matrícula con id " + id + "?");
 								confirmacion = sc.nextLine();
 								if(confirmacion.toLowerCase().charAt(0) == 's') {
-									borrado = GestionMatriculas.borrarMatricula(id);
+									borrado = GestionMatriculas.borrar(id);
 									if (borrado) {
 										System.out.println("Se ha borrado correctamente");
 									}

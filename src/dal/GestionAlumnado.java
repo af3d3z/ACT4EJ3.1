@@ -1,6 +1,7 @@
 package dal;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,7 +57,7 @@ public class GestionAlumnado {
 	
 	/***
 	 * Devuelve un listado de alumnos
-	 * @return
+	 * @return ArrayList de alumnos
 	 */
 	public static ArrayList<Alumno> listadoCompleto() {
 		Connection conn = GestionDB.connect();
@@ -74,5 +75,78 @@ public class GestionAlumnado {
 		return alumnos;
 	}
 	
+	/***
+	 * Modifica el nombre del alumno mediante el id
+	 * @param id
+	 * @param nombre
+	 * @return true si se ha podido modificar satisfactoriamente
+	 */
+	public static boolean modificarNombre(int id, String nombre) {
+		boolean actualizado = false;
+		Connection conn = GestionDB.connect();
+		
+		try {
+			Statement statement = conn.createStatement();
+			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET Nombre = %s WHERE id = %d", nombre, id)) > 0 ? true: false;
+		} catch (SQLException e) {
+			System.err.println("No se ha podido actualizar el nombre del alumno, comprueba que existan el alumno y la tabla Alumnado.");
+		}
+		return actualizado;
+	}
+	/***
+	 * Modifica el apellido de un alumno mediante su id
+	 * @param id
+	 * @param apellidos
+	 * @return true si se ha podido modificar satisfactoriamente
+	 */
+	public static boolean modificarApellidos(int id, String apellidos) {
+		boolean actualizado = false;
+		Connection conn = GestionDB.connect();
+		
+		try {
+			Statement statement = conn.createStatement();
+			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET Apellidos = %s WHERE id = %d", apellidos, id)) > 0 ? true: false;
+		} catch (SQLException e) {
+			System.err.println("No se ha podido actualizar los apellidos del alumno, comprueba que existan el alumno y la tabla Alumnado.");
+		}
+		return actualizado;
+	}
 	
+	/***
+	 * Modifica la fecha de nacimiento de un alumno
+	 * @param id
+	 * @param fechaNacimiento
+	 * @return true si se ha podido modificar satisfactoriamente
+	 */
+	public static boolean modificarFechaNacimiento(int id, Date fechaNacimiento) {
+		boolean actualizado = false;
+		Connection conn = GestionDB.connect();
+		
+		try {
+			Statement statement = conn.createStatement();
+			actualizado = statement.executeUpdate(String.format("UPDATE Alumnado SET FechaNacimiento = '%s' WHERE id = %d", fechaNacimiento.toString(), id)) > 0 ? true: false;
+		} catch (SQLException e) {
+			System.err.println("No se ha podido actualizar los apellidos del alumno, comprueba que existan el alumno y la tabla Alumnado.");
+		}
+		return actualizado;
+	}
+	
+	
+	/***
+	 * Borra un alumno de la tabla alumnado
+	 * @param id
+	 * @return
+	 */
+	public static boolean borrar(int id) {
+		boolean borrado = false;
+		Connection conn = GestionDB.connect();
+		
+		try {
+			Statement statement = conn.createStatement();
+			borrado = statement.executeUpdate(String.format("DELETE FROM Alumnado WHERE id = %d", id)) > 0 ? true : false;
+		} catch (SQLException e) {
+			System.err.println("No se ha podido borrar el alumno, comprueba que existan el alumno y la tabla Alumnado");
+		}
+		return borrado;
+	}
 }
